@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Tumor Classifier</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9ff;
+        }
+        
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8ebff;
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        .upload-text {
+            font-size: 1.3em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .upload-hint {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .preview-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .preview-image {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 10px;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .results-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .result-title {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .confidence-bar {
+            background: rgba(255,255,255,0.3);
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .confidence-fill {
+            background: white;
+            height: 100%;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .probabilities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .prob-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .prob-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .prob-value {
+            font-size: 1.5em;
+        }
+        
+        .visualization {
+            margin-top: 30px;
+        }
+        
+        .visualization img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+        
+        .info-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Brain Tumor Classifier</h1>
+            <p>AI-Powered MRI Analysis with Tumor Localization</p>
+            <div style="margin-top: 20px;">
+                <span class="info-badge">DenseNet121</span>
+                <span class="info-badge">99.23% Accuracy</span>
+                <span class="info-badge">AI Visualization</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">Click to upload or drag & drop</div>
+                    <div class="upload-hint">Supported: PNG, JPG, JPEG, BMP, TIFF (Max 16MB)</div>
+                </div>
+                <input type="file" id="fileInput" accept="image/*">
+            </div>
+            
+            <div class="preview-section" id="previewSection">
+                <h3 style="text-align: center; margin-bottom: 20px;">Preview</h3>
+                <img id="previewImage" class="preview-image" alt="Preview">
+                <div style="text-align: center;">
+                    <button class="btn" id="analyzeBtn">🔬 Analyze MRI Scan</button>
+                    <button class="btn" id="cancelBtn" style="background: #e0e0e0; color: #333;">Cancel</button>
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="font-size: 1.2em; color: #667eea;">Analyzing your MRI scan...</p>
+                <p style="color: #666;">This may take a few seconds</p>
+            </div>
+            
+            <div class="error" id="errorMsg"></div>
+        </div>
+        
+        <div class="results-section" id="resultsSection">
+            <div class="card">
+                <div class="result-card">
+                    <div class="result-title" id="resultTitle">Diagnosis: Loading...</div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill" style="width: 0%">
+                            <span id="confidenceText">0%</span>
+                        </div>
+                    </div>
+                    <div id="highlightInfo" style="margin-top: 15px; opacity: 0.9;"></div>
+                    
+                    <h3 style="margin-top: 30px; margin-bottom: 15px;">All Class Probabilities</h3>
+                    <div class="probabilities" id="probabilities"></div>
+                </div>
+                
+                <div class="visualization">
+                    <h3 style="text-align: center; margin-bottom: 20px;">MRI Analysis Visualization</h3>
+                    <img id="visualizationImage" alt="Visualization">
+                    <p style="text-align: center; color: #666; margin-top: 15px;">
+                        <strong>Left to Right:</strong> Original MRI | Enhanced (Contrast) | <strong style="color: red;">AI Overlay</strong>
+                    </p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn" id="newAnalysisBtn">🔄 Analyze Another Image</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>⚠️ For research and educational purposes only. Not for clinical diagnosis.</p>
+            <p style="margin-top: 10px;">Built with TensorFlow and Keras</p>
+        </div>
+    </div>
+    
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const previewSection = document.getElementById('previewSection');
+        const previewImage = document.getElementById('previewImage');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const loading = document.getElementById('loading');
+        const errorMsg = document.getElementById('errorMsg');
+        const resultsSection = document.getElementById('resultsSection');
+        const newAnalysisBtn = document.getElementById('newAnalysisBtn');
+        
+        let selectedFile = null;
+        
+        // Click to upload
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+        
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+        
+        function handleFileSelect(file) {
+            selectedFile = file;
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewSection.style.display = 'block';
+                errorMsg.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Cancel button
+        cancelBtn.addEventListener('click', () => {
+            selectedFile = null;
+            previewSection.style.display = 'none';
+            fileInput.value = '';
+        });
+        
+        // Analyze button
+        analyzeBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+            
+            // Show loading
+            previewSection.style.display = 'none';
+            loading.style.display = 'block';
+            errorMsg.style.display = 'none';
+            resultsSection.style.display = 'none';
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Display results
+                displayResults(data);
+                
+            } catch (error) {
+                loading.style.display = 'none';
+                errorMsg.textContent = '❌ ' + error.message;
+                errorMsg.style.display = 'block';
+                previewSection.style.display = 'block';
+            }
+        });
+        
+        function displayResults(data) {
+            loading.style.display = 'none';
+            resultsSection.style.display = 'block';
+            
+            // Check if uncertain prediction
+            const isUncertain = data.is_uncertain;
+            const resultCard = document.querySelector('.result-card');
+            
+            if (isUncertain) {
+                // Style for uncertain predictions
+                resultCard.style.background = 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)';
+                document.getElementById('resultTitle').innerHTML = 
+                    `⚠️ UNCERTAIN PREDICTION<br><small style="font-size: 0.6em;">${data.prediction}? (Below ${data.confidence_threshold.toFixed(0)}% threshold)</small>`;
+            } else {
+                // Style for confident predictions
+                resultCard.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                document.getElementById('resultTitle').textContent = `Diagnosis: ${data.prediction}`;
+            }
+            
+            // Set confidence
+            const confidence = data.confidence;
+            setTimeout(() => {
+                const fill = document.getElementById('confidenceFill');
+                fill.style.width = confidence + '%';
+                
+                // Change color for low confidence
+                if (isUncertain) {
+                    fill.style.background = '#e67e22';
+                } else {
+                    fill.style.background = 'white';
+                }
+                
+                document.getElementById('confidenceText').textContent = confidence.toFixed(1) + '%';
+            }, 100);
+            
+            // Set highlight info with warning if uncertain
+            let highlightHtml = `Tumor region highlighted: ${data.highlighted_area}% of scan`;
+            if (isUncertain) {
+                highlightHtml = `
+                    <div style="background: rgba(255,255,255,0.3); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                        <strong>⚠️ WARNING: ${data.warning_message}</strong>
+                        <br><br>
+                        <strong>Possible reasons:</strong>
+                        <ul style="margin: 10px 0; padding-left: 20px; text-align: left;">
+                            <li>Normal brain scan (no tumor)</li>
+                            <li>Poor image quality or unusual scan type</li>
+                            <li>Atypical tumor presentation</li>
+                            <li>Non-brain image uploaded</li>
+                        </ul>
+                        <strong>📋 Recommendation: Manual review by radiologist required</strong>
+                    </div>
+                `;
+            }
+            document.getElementById('highlightInfo').innerHTML = highlightHtml;
+            
+            // Set probabilities
+            const probDiv = document.getElementById('probabilities');
+            probDiv.innerHTML = '';
+            for (const [className, prob] of Object.entries(data.probabilities)) {
+                probDiv.innerHTML += `
+                    <div class="prob-item">
+                        <div class="prob-label">${className}</div>
+                        <div class="prob-value">${prob}%</div>
+                    </div>
+                `;
+            }
+            
+            // Set visualization
+            document.getElementById('visualizationImage').src = 
+                'data:image/png;base64,' + data.visualization;
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // New analysis button
+        newAnalysisBtn.addEventListener('click', () => {
+            selectedFile = null;
+            fileInput.value = '';
+            previewSection.style.display = 'none';
+            resultsSection.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

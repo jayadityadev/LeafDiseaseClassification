@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaf Condition AI Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        @media print {
+            body {
+                background: #ffffff !important;
+            }
+            .navbar, .report-actions, .footer {
+                display: none !important;
+            }
+            .report-page {
+                box-shadow: none !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="report-body">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">🍃 Leaf Condition Classifier</div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 90px; padding-bottom: 40px;">
+        <div class="report-page">
+            <header class="report-header">
+                <div class="report-header-main">
+                    <div>
+                        <h1>Leaf Condition AI Report</h1>
+                        <p class="report-subtitle">For field support only · Not a lab diagnosis</p>
+                    </div>
+                    <div class="report-meta-block">
+                        <div class="report-meta-label">Generated</div>
+                        <div class="report-meta-value">{{ generated_at }}</div>
+                        <div class="report-meta-label">Model</div>
+                        <div class="report-meta-value">DenseNet121 (research use)</div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="report-section">
+                <h2>1. AI Summary</h2>
+                <div class="report-summary-cards">
+                    <div class="report-summary-card {{ 'uncertain' if is_uncertain else 'confident' }}">
+                        <h3>Status</h3>
+                        {% if is_uncertain %}
+                        <p class="status-pill status-pill-uncertain">Uncertain prediction</p>
+                        <p>Top suggested condition: <strong>{{ prediction }}</strong></p>
+                        <p>Confidence <strong>{{ confidence|round(1) }}%</strong> (threshold {{ confidence_threshold|round(0) }}%).</p>
+                        {% else %}
+                        <p class="status-pill status-pill-confident">High confidence</p>
+                        <p>Predicted condition: <strong>{{ prediction }}</strong></p>
+                        <p>Model confidence: <strong>{{ confidence|round(1) }}%</strong></p>
+                        {% endif %}
+                    </div>
+                    <div class="report-summary-card">
+                        <h3>Confidence details</h3>
+                        <p>Prediction entropy (uncertainty index): <strong>{{ entropy|round(3) }}</strong></p>
+                    </div>
+                </div>
+
+                {% if is_uncertain and warning_message %}
+                <div class="report-callout warning">
+                    <h3>Field note</h3>
+                    <p>{{ warning_message }}</p>
+                </div>
+                {% endif %}
+            </section>
+
+            <section class="report-section">
+                <h2>2. Leaf condition overview</h2>
+                <p class="report-text">This AI system can distinguish between six leaf conditions. The notes below are general descriptions and do not replace lab confirmation.</p>
+                <div class="tumor-overview-grid">
+                    <div class="tumor-overview-card">
+                        <h3>Healthy Leaf</h3>
+                        <p>Normal foliage with no visible disease symptoms.</p>
+                    </div>
+                    <div class="tumor-overview-card">
+                        <h3>Healthy Nut</h3>
+                        <p>Normal nuts without discoloration or lesions.</p>
+                    </div>
+                    <div class="tumor-overview-card">
+                        <h3>Mahali Koleroga</h3>
+                        <p>Combined condition category as labeled in the dataset.</p>
+                    </div>
+                    <div class="tumor-overview-card">
+                        <h3>Yellow Leaf</h3>
+                        <p>Yellowing patterns consistent with stress or disease.</p>
+                    </div>
+                    <div class="tumor-overview-card">
+                        <h3>Ring Spot</h3>
+                        <p>Ring-like lesions or spot patterns on leaf surfaces.</p>
+                    </div>
+                    <div class="tumor-overview-card">
+                        <h3>Bud Rot</h3>
+                        <p>Rot-related damage visible on buds or stems.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="report-section">
+                <h2>3. Field guidance</h2>
+                <p class="report-text">The points below are general good-practice measures often used in crop scouting workflows. They are not treatment instructions and may not apply to every farm.</p>
+                <ul class="report-list">
+                    <li>Inspect multiple leaves and plants before making decisions.</li>
+                    <li>Compare with known healthy samples from the same field.</li>
+                    <li>Record lighting conditions and camera distance for repeatability.</li>
+                    <li>Consult a local agronomist for lab confirmation when needed.</li>
+                </ul>
+            </section>
+
+            <section class="report-section">
+                <h2>4. Class probabilities</h2>
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Condition</th>
+                            <th>Probability</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in probabilities_sorted %}
+                        <tr {% if item.name == prediction %}class="highlight"{% endif %}>
+                            <td>{{ item.name }}{% if item.name == prediction %} (top prediction){% endif %}</td>
+                            <td>{{ item.value|round(1) }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="report-section">
+                <h2>5. Important disclaimer</h2>
+                <p class="report-text">
+                    This system is a research tool for classifying six labeled leaf conditions.
+                    It is <strong>not designed</strong> to diagnose unseen diseases or replace lab confirmation.
+                </p>
+                <p class="report-text">
+                    This report must not be used as a standalone basis for agricultural decisions. Final interpretation
+                    should consider field context, crop history, and expert guidance.
+                </p>
+            </section>
+        </div>
+
+        <div class="report-actions">
+            <button class="btn btn-secondary" onclick="window.history.back()">← Back</button>
+            <button class="btn btn-primary" onclick="window.print()"><span class="btn-icon">📄</span> Print / Save as PDF</button>
+        </div>
+    </div>
+
+</body>
+</html>

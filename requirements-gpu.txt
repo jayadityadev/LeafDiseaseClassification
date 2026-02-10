@@ -1,0 +1,38 @@
+# Brain Tumor Classification - GPU Setup
+# For users with NVIDIA GPUs (MUCH FASTER training!)
+#
+# Requirements:
+# - NVIDIA GPU (GTX 1060 or better)
+# - NVIDIA drivers 525.x or newer
+# - Python 3.9-3.11
+#
+# Installation:
+# pip install -r requirements-gpu.txt
+
+# TensorFlow with GPU support (includes CUDA/cuDNN automatically!)
+tensorflow[and-cuda]>=2.13.0,<2.16.0
+
+# All other dependencies
+-r requirements-base.txt
+
+# ═══════════════════════════════════════════════════════════════════
+# NOTES:
+# ═══════════════════════════════════════════════════════════════════
+# 
+# TensorFlow 2.13+ uses pip's extras feature to install GPU dependencies.
+# When you install tensorflow[and-cuda], it automatically includes:
+# - nvidia-cudnn-cu11 (cuDNN library)
+# - nvidia-cublas-cu11 (CUDA BLAS)
+# - nvidia-cuda-nvrtc-cu11 (CUDA runtime compiler)
+# - nvidia-cuda-runtime-cu11 (CUDA runtime)
+# 
+# You DON'T need to:
+# - Manually install CUDA toolkit
+# - Manually install cuDNN
+# - Set LD_LIBRARY_PATH
+# 
+# Training speed comparison:
+# - CPU: ~2-3 hours for full training
+# - GPU: ~15-20 minutes for full training
+# 
+# ═══════════════════════════════════════════════════════════════════

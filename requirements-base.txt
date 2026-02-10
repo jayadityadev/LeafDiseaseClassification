@@ -1,0 +1,38 @@
+# Leaf Disease Classification - Base Dependencies
+# Use this after installing TensorFlow (GPU or CPU version)
+
+# Data Processing
+numpy>=1.23.0,<2.0.0
+pandas>=2.0.0
+scipy>=1.10.0
+h5py>=3.8.0
+
+# Image Processing
+opencv-python>=4.8.0
+Pillow>=10.0.0
+
+# Machine Learning Utils
+scikit-learn>=1.3.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Web Framework
+Flask>=2.3.0
+Werkzeug>=2.3.0
+
+# PDF Generation
+reportlab>=4.2.0
+
+# Progress Bars
+tqdm>=4.65.0
+
+# HTTP Requests
+requests>=2.31.0
+
+# Kaggle API (for dataset download)
+kaggle>=1.5.16
+
+# Keras (if needed separately)
+keras>=2.13.0

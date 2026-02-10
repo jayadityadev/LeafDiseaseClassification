@@ -1,0 +1,33 @@
+# Brain Tumor Classification - Dependencies
+# Python 3.9+ required
+
+# ═══════════════════════════════════════════════════════════════════
+# IMPORTANT: GPU vs CPU Setup
+# ═══════════════════════════════════════════════════════════════════
+#
+# This file installs CPU-ONLY TensorFlow (slower, but works everywhere).
+#
+# 🚀 FOR NVIDIA GPU USERS (10-12x FASTER):
+# ----------------------------------------
+# Use requirements-gpu.txt instead:
+#
+#   pip install -r requirements-gpu.txt
+#
+# This will automatically install TensorFlow with CUDA/cuDNN support.
+# Requirements: NVIDIA GPU + drivers 525.x or newer
+#
+# 🐌 FOR CPU-ONLY USERS:
+# ----------------------
+# Use this file (you're good to go):
+#
+#   pip install -r requirements.txt
+#
+# Training will take 2-3 hours instead of 15-20 minutes on GPU.
+#
+# ═══════════════════════════════════════════════════════════════════
+
+# Deep Learning Framework (CPU-only)
+tensorflow>=2.13.0,<2.16.0
+
+# All other dependencies
+-r requirements-base.txt

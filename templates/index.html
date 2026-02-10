@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaf Condition Classifier - AI-Powered Crop Diagnostics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">🍃 Leaf Condition Classifier</div>
+            <div class="nav-links">
+                <a href="/" class="nav-link active">Home</a>
+                <a href="/metrics" class="nav-link">Metrics</a>
+                <a href="#about" class="nav-link">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Live Stats -->
+    <div class="hero">
+        <div class="container">
+            <h1 class="hero-title">AI-Powered Leaf Condition Classification</h1>
+            <p class="hero-subtitle">Field-ready diagnostics with transfer learning and explainability</p>
+            
+            <!-- Module Overview -->
+            <div class="module-overview">
+                <div class="module-card">
+                    <div class="module-icon">🔬</div>
+                    <div class="module-title">Module 1: Leaf Image Prep</div>
+                    <div class="module-desc">Resize • Crop • Augmentation • Normalization</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="module-card">
+                    <div class="module-icon">🤖</div>
+                    <div class="module-title">Module 2: Deep Learning</div>
+                    <div class="module-desc">DenseNet121 • Transfer Learning • Confidence Scoring</div>
+                </div>
+            </div>
+            
+            <!-- Live Stats Bar -->
+            <div class="stats-bar" id="statsBar">
+                <div class="stat-item">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="accuracy">--</div>
+                        <div class="stat-label">Test Accuracy</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="samples">--</div>
+                        <div class="stat-label">Training Samples</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="speed">--</div>
+                        <div class="stat-label">Inference Time</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">🔬</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="classes">6</div>
+                        <div class="stat-label">Leaf Classes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container main-content">
+        <!-- Upload Section -->
+        <div class="card upload-card">
+            <h2 class="section-title">Upload Leaf Image</h2>
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">Click to upload or drag & drop</div>
+                    <div class="upload-hint">Supported: PNG, JPG, JPEG, BMP, TIFF (Max 16MB)</div>
+                </div>
+                <input type="file" id="fileInput" accept="image/*">
+            </div>
+            
+            <div class="preview-section" id="previewSection">
+                <h3 class="preview-title">Preview</h3>
+                <img id="previewImage" class="preview-image" alt="Preview">
+                <div class="button-group">
+                    <button class="btn btn-primary" id="analyzeBtn">
+                        <span class="btn-icon">🔬</span> Analyze Leaf Image
+                    </button>
+                    <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="pipeline-progress">
+                    <div class="progress-stage active" id="stage1">
+                        <div class="stage-icon">📤</div>
+                        <div class="stage-text">Loading Leaf Image...</div>
+                        <div class="stage-check">✓</div>
+                    </div>
+                    <div class="progress-stage" id="stage2">
+                        <div class="stage-icon">🔬</div>
+                        <div class="stage-text">Preprocessing & Augmentation...</div>
+                        <div class="stage-check">✓</div>
+                    </div>
+                    <div class="progress-stage" id="stage3">
+                        <div class="stage-icon">🤖</div>
+                        <div class="stage-text">Running Classifier...</div>
+                        <div class="stage-check">✓</div>
+                    </div>
+                    <div class="progress-stage" id="stage4">
+                        <div class="stage-icon">📊</div>
+                        <div class="stage-text">Generating Results...</div>
+                        <div class="stage-check">✓</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="error" id="errorMsg"></div>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div class="card result-card-main">
+                <!-- Diagnosis Card -->
+                <div class="diagnosis-card" id="diagnosisCard">
+                    <div class="diagnosis-header">
+                        <h2 class="diagnosis-title" id="resultTitle">Prediction: Loading...</h2>
+                        <div class="diagnosis-badge" id="diagnosisBadge">Analyzing...</div>
+                    </div>
+                    
+                    <div class="confidence-section">
+                        <div class="confidence-label">
+                            <span>Confidence Level</span>
+                            <span id="confidencePercent">0%</span>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceFill"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="highlightInfo" class="highlight-info"></div>
+                    
+                    <!-- All Class Probabilities -->
+                    <div class="probabilities-section">
+                        <h3 class="probabilities-title">Class Probabilities</h3>
+                        <div class="probabilities-grid" id="probabilities"></div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-secondary btn-large" id="downloadReportBtn" style="display:none; margin-right: 10px;">
+                        <span class="btn-icon">📄</span> Generate Field Report
+                    </button>
+                    <button class="btn btn-primary btn-large" id="newAnalysisBtn">
+                        <span class="btn-icon">🔄</span> Analyze Another Image
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pipeline Demonstration Section -->
+        <div class="card">
+            <h2 class="section-title" style="color: var(--dark);">🔄 Complete Processing Pipeline</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 1.05rem;">End-to-end workflow from raw leaf image to classified condition</p>
+            
+            <div class="pipeline-vertical">
+                <!-- Step 1: Input -->
+                <div class="pipeline-module">
+                    <div class="module-number">1</div>
+                    <div class="module-content neutral">
+                        <div class="module-icon-large">📤</div>
+                        <h3 class="module-heading">Input Leaf Image</h3>
+                        <p class="module-description">Upload a leaf or nut image from the field</p>
+                    </div>
+                </div>
+                
+                <div class="pipeline-divider">
+                    <div class="divider-line"></div>
+                    <div class="divider-arrow">↓</div>
+                </div>
+                
+                <!-- Step 2: Module 1 -->
+                <div class="pipeline-module">
+                    <div class="module-number blue">2</div>
+                    <div class="module-content blue">
+                        <div class="module-header">
+                            <div class="module-icon-large">🔬</div>
+                            <div>
+                                <h3 class="module-heading">Module 1: Image Preparation</h3>
+                                <p class="module-subtitle">Resize, crop, normalize</p>
+                            </div>
+                        </div>
+                        <div class="module-techniques">
+                            <div class="technique-item">
+                                <span class="technique-badge blue">✂️ Crop</span>
+                                <span class="technique-desc">Center crop to square</span>
+                            </div>
+                            <div class="technique-item">
+                                <span class="technique-badge blue">🧪 Augmentation</span>
+                                <span class="technique-desc">Flip, rotate, zoom</span>
+                            </div>
+                            <div class="technique-item">
+                                <span class="technique-badge blue">📏 Normalization</span>
+                                <span class="technique-desc">ImageNet scaling</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pipeline-divider">
+                    <div class="divider-line"></div>
+                    <div class="divider-arrow">↓</div>
+                </div>
+                
+                <!-- Step 3: Module 2 -->
+                <div class="pipeline-module">
+                    <div class="module-number purple">3</div>
+                    <div class="module-content purple">
+                        <div class="module-header">
+                            <div class="module-icon-large">🤖</div>
+                            <div>
+                                <h3 class="module-heading">Module 2: Deep Learning</h3>
+                                <p class="module-subtitle">Classification & Confidence</p>
+                            </div>
+                        </div>
+                        <div class="module-techniques">
+                            <div class="technique-item">
+                                <span class="technique-badge purple">🧠 DenseNet121</span>
+                                <span class="technique-desc">Transfer learning model</span>
+                            </div>
+                            <div class="technique-item">
+                                <span class="technique-badge purple">🎯 Softmax</span>
+                                <span class="technique-desc">Probability distribution</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pipeline-divider">
+                    <div class="divider-line"></div>
+                    <div class="divider-arrow">↓</div>
+                </div>
+                
+                <!-- Step 4: Output -->
+                <div class="pipeline-module">
+                    <div class="module-number">4</div>
+                    <div class="module-content neutral">
+                        <div class="module-icon-large">📊</div>
+                        <h3 class="module-heading">Classification Results</h3>
+                        <p class="module-description">Leaf condition prediction with confidence scores</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Module Details Section -->
+        <div class="modules-section">
+            <!-- Module 1 -->
+            <div class="card module-card-detailed">
+                <div class="module-header">
+                    <div class="module-badge module-1-badge">Module 1</div>
+                    <h2>🔬 Image Preparation & Augmentation</h2>
+                </div>
+                <p class="module-intro">Preprocessing pipeline that standardizes leaf images before classification</p>
+                
+                <div class="technique-grid">
+                    <div class="technique-card">
+                        <div class="technique-icon">🧹</div>
+                        <h4>Center Crop</h4>
+                        <p><strong>Purpose:</strong> Creates a consistent square frame around the leaf or nut region</p>
+                        <p><strong>Impact:</strong> Reduces background noise and improves feature focus</p>
+                    </div>
+                    
+                    <div class="technique-card">
+                        <div class="technique-icon">✨</div>
+                        <h4>Augmentation</h4>
+                        <p><strong>Purpose:</strong> Adds controlled variability (flip, rotate, zoom, contrast)</p>
+                        <p><strong>Impact:</strong> Improves generalization across lighting and angle changes</p>
+                    </div>
+                    
+                    <div class="technique-card">
+                        <div class="technique-icon">📏</div>
+                        <h4>Normalization</h4>
+                        <p><strong>Purpose:</strong> Applies ImageNet preprocessing for DenseNet121</p>
+                        <p><strong>Impact:</strong> Aligns input distribution with pretrained weights</p>
+                    </div>
+                </div>
+                
+                <div class="module-stats">
+                    <div class="stat-item-small">
+                        <strong>2,766</strong>
+                        <span>Images Total</span>
+                    </div>
+                    <div class="stat-item-small">
+                        <strong>6</strong>
+                        <span>Leaf Classes</span>
+                    </div>
+                    <div class="stat-item-small">
+                        <strong>224×224</strong>
+                        <span>Input Resolution</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Module 2 -->
+            <div class="card module-card-detailed">
+                <div class="module-header">
+                    <div class="module-badge module-2-badge">Module 2</div>
+                    <h2>🤖 Deep Learning Classification</h2>
+                </div>
+                <p class="module-intro">Transfer learning with DenseNet121 for accurate leaf condition classification</p>
+                
+                <div class="technique-grid">
+                    <div class="technique-card">
+                        <div class="technique-icon">🧠</div>
+                        <h4>DenseNet121 Architecture</h4>
+                        <p><strong>Base Model:</strong> Pre-trained on ImageNet with 7.3M parameters</p>
+                        <p><strong>Strategy:</strong> Transfer learning with fine-tuning on leaf condition data</p>
+                    </div>
+                    
+                    <div class="technique-card">
+                        <div class="technique-icon">🎯</div>
+                        <h4>6-Class Classification</h4>
+                        <p><strong>Classes:</strong> Healthy Leaf, Healthy Nut, Mahali Koleroga, Yellow Leaf, Ring Spot, Bud Rot</p>
+                        <p><strong>Output:</strong> Softmax probability distribution with confidence scores</p>
+                    </div>
+                    
+                    <div class="technique-card">
+                        <div class="technique-icon">📊</div>
+                        <h4>Confidence Scoring</h4>
+                        <p><strong>Purpose:</strong> Communicates model certainty for each class</p>
+                        <p><strong>Impact:</strong> Helps prioritize when manual review is needed</p>
+                    </div>
+                </div>
+                
+                <div class="module-stats">
+                    <div class="stat-item-small">
+                        <strong>Goal 95%+</strong>
+                        <span>Target Accuracy</span>
+                    </div>
+                    <div class="stat-item-small">
+                        <strong>2,211</strong>
+                        <span>Training Samples</span>
+                    </div>
+                    <div class="stat-item-small">
+                        <strong>GPU</strong>
+                        <span>Accelerated Inference</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- About Section -->
+        <div class="about-section" id="about">
+            <div class="card">
+                <h2 class="section-title">About This System</h2>
+                <div class="about-content">
+                    <p>
+                        This AI-powered system classifies leaf and nut images into six condition categories for field diagnostics.
+                    </p>
+                    <p>
+                        Built with <strong>TensorFlow</strong> and <strong>DenseNet121</strong> transfer learning,
+                        focused on fast, consistent field classification.
+                    </p>
+                    <div style="background: linear-gradient(135deg, #fff3cd, #fff8e1); padding: 20px; border-radius: 10px; border-left: 4px solid #ff9800; margin: 20px 0;">
+                        <h4 style="color: #f57c00; margin-bottom: 10px;">⚠️ Important Scope Limitation</h4>
+                        <p style="color: #555; margin-bottom: 10px;">
+                            <strong>This model is trained on six labeled conditions only.</strong>
+                            It is designed to <strong>differentiate between those conditions</strong>, not to diagnose unseen diseases.
+                        </p>
+                        <p style="color: #555; margin: 0;">
+                            <strong>Expected behavior:</strong> If an out-of-scope image is provided, the model will still map it to one of the six classes.
+                        </p>
+                    </div>
+                    <div class="tumor-types">
+                        <div class="tumor-type">
+                            <h4>🌿 Healthy Leaf</h4>
+                            <p>Normal foliage with no visible disease symptoms.</p>
+                        </div>
+                        <div class="tumor-type">
+                            <h4>🥜 Healthy Nut</h4>
+                            <p>Normal nuts without discoloration or lesions.</p>
+                        </div>
+                        <div class="tumor-type">
+                            <h4>🍂 Yellow Leaf</h4>
+                            <p>Chlorosis-like yellowing typically linked to stress or disease.</p>
+                        </div>
+                        <div class="tumor-type">
+                            <h4>🟤 Ring Spot</h4>
+                            <p>Ring-shaped lesions or spots on leaf surfaces.</p>
+                        </div>
+                        <div class="tumor-type">
+                            <h4>🧪 Mahali Koleroga</h4>
+                            <p>Combined condition category from the dataset labeling.</p>
+                        </div>
+                        <div class="tumor-type">
+                            <h4>🌧️ Bud Rot</h4>
+                            <p>Bud or stem tissue damage with visible rot symptoms.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>⚠️ Agricultural Disclaimer</h3>
+                    <p>For research and educational purposes only. Not a substitute for expert agronomy advice.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>🔬 Technology</h3>
+                    <p>TensorFlow • Keras • DenseNet121 • Flask</p>
+                </div>
+                <div class="footer-section">
+                    <h3>📊 Model Info</h3>
+                    <p>Training: 2,211 samples • Test: 280 samples • Classes: 6</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Leaf Condition Classifier. Built for Crop AI Research.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

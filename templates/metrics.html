@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Metrics - Leaf Condition Classifier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .metric-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .metric-value {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            font-size: 1rem;
+            opacity: 0.85;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        
+        .class-bar {
+            margin: 15px 0;
+        }
+        
+        .class-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .class-bar-fill-container {
+            background: #ecf0f1;
+            height: 35px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .class-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            color: white;
+            font-weight: 600;
+            transition: width 1s ease;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .tech-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-online {
+            background: #4CAF50;
+            box-shadow: 0 0 10px #4CAF50;
+        }
+        
+        .status-offline {
+            background: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">🍃 Leaf Condition Classifier</div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/metrics" class="nav-link active">Metrics</a>
+                <a href="/#about" class="nav-link">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="container">
+            <h1 class="hero-title">📊 System Metrics & Performance</h1>
+            <p class="hero-subtitle">Model and dataset statistics for leaf condition classification</p>
+        </div>
+    </div>
+    
+    <div class="container main-content">
+        <!-- Model Architecture Details -->
+        <div class="card">
+            <h2 class="section-title">🤖 Model Status</h2>
+            <div style="margin: 20px 0;">
+                <span class="status-indicator status-online" id="modelStatus"></span>
+                <strong>Model Loaded and Ready</strong>
+            </div>
+            <div style="color: #666; margin-top: 15px;">
+                <p id="modelPath">Loading model information...</p>
+                <p id="modelArch" style="margin-top: 10px;">Architecture: --</p>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800; margin-top: 20px;">
+                <p style="color: #555; margin: 0; font-size: 0.95rem;">
+                    <strong>⚠️ Model Scope:</strong> Trained on 6 leaf conditions only. It will map any input to one of those classes.
+                </p>
+            </div>
+        </div>
+
+        <!-- Image Enhancement Metrics (Module 1) -->
+        <div class="card">
+            <h2 class="section-title">🔬 Image Preparation Metrics (Module 1)</h2>
+            <p style="color: #666; margin-bottom: 25px;">Preprocessing pipeline and input standardization</p>
+            
+            <div class="enhancement-grid">
+                <div class="enhancement-card">
+                    <div class="enhancement-icon">✂️</div>
+                    <h3 style="font-size: 1.15rem;">Resize + Center Crop</h3>
+                    <div class="enhancement-stats">
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Resize:</span>
+                            <span class="stat-value" style="font-size: 0.95rem;">256×256</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Crop:</span>
+                            <span class="stat-value" style="font-size: 0.95rem;">224×224</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Policy:</span>
+                            <span class="stat-value" style="font-size: 0.95rem;">Center crop</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Impact:</span>
+                            <span class="stat-value-highlight">Consistent framing</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="enhancement-card">
+                    <div class="enhancement-icon">🧪</div>
+                    <h3 style="font-size: 1.15rem;">Augmentation</h3>
+                    <div class="enhancement-stats">
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Rotation:</span>
+                            <span class="stat-value" style="font-size: 0.95rem;">±8%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Zoom:</span>
+                            <span class="stat-value" style="font-size: 0.95rem;">10%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Contrast:</span>
+                            <span class="stat-value" style="font-size: 0.95rem; text-align: right">10%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Impact:</span>
+                            <span class="stat-value-highlight">Generalization</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="enhancement-card">
+                    <div class="enhancement-icon">📏</div>
+                    <h3 style="font-size: 1.15rem;">Normalization</h3>
+                    <div class="enhancement-stats">
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Method:</span>
+                            <span class="stat-value" style="font-size: 0.95rem;">ImageNet Preprocess</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Range:</span>
+                            <span class="stat-value" style="font-size: 0.95rem;">Model-specific</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Color Space:</span>
+                            <span class="stat-value" style="font-size: 0.95rem;">RGB (3 channels)</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label" style="font-size: 0.95rem;">Impact:</span>
+                            <span class="stat-value-highlight">Stable convergence</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="enhancement-summary">
+                <div class="summary-item">
+                    <div class="summary-label">Total Images</div>
+                    <div class="summary-value">2,766</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Baseline Accuracy</div>
+                    <div class="summary-value">--</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Target Accuracy</div>
+                    <div class="summary-value">95%+</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Total Improvement</div>
+                    <div class="summary-value improvement">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Metrics Grid -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>🎯 Model Accuracy</h3>
+                <div class="metric-value" id="metricAccuracy">--</div>
+                <div class="metric-label">Test Set Performance</div>
+            </div>
+            
+            <div class="metric-card" style="background: linear-gradient(135deg, #4CAF50, #45a049);">
+                <h3>📊 Training Samples</h3>
+                <div class="metric-value" id="metricTrainSamples">--</div>
+                <div class="metric-label">Images in Training Set</div>
+            </div>
+            
+            <div class="metric-card" style="background: linear-gradient(135deg, #2196F3, #1976D2);">
+                <h3>✅ Test Samples</h3>
+                <div class="metric-value" id="metricTestSamples">--</div>
+                <div class="metric-label">Images in Test Set</div>
+            </div>
+            
+            <div class="metric-card" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                <h3>⚡ Inference Speed</h3>
+                <div class="metric-value" id="metricSpeed">--</div>
+                <div class="metric-label">Average Processing Time</div>
+            </div>
+            
+            <div class="metric-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                <h3>🔢 Model Parameters</h3>
+                <div class="metric-value" id="metricParams">--</div>
+                <div class="metric-label">Trainable Parameters</div>
+            </div>
+            
+            <div class="metric-card" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                <h3>🖥️ GPU Status</h3>
+                <div class="metric-value" id="metricGPU">--</div>
+                <div class="metric-label">Hardware Acceleration</div>
+            </div>
+        </div>
+
+        <!-- Class Distribution -->
+        <div class="card">
+            <h2 class="section-title">📊 Dataset Class Distribution</h2>
+            <div class="chart-card">
+                <p style="color: #666; margin-bottom: 20px;">
+                    Number of samples per leaf condition across the dataset. Bar width shows relative comparison (scaled to largest class), percentage shows actual proportion of total.
+                </p>
+                <div id="classDistribution">
+                    <div class="class-bar">
+                        <div class="class-bar-label">
+                            <span>🌿 Healthy Leaf</span>
+                            <span id="healthyLeafCount">--</span>
+                        </div>
+                        <div class="class-bar-fill-container">
+                            <div class="class-bar-fill" id="healthyLeafBar" style="width: 0%;">0%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="class-bar">
+                        <div class="class-bar-label">
+                            <span>🥜 Healthy Nut</span>
+                            <span id="healthyNutCount">--</span>
+                        </div>
+                        <div class="class-bar-fill-container">
+                            <div class="class-bar-fill" id="healthyNutBar" style="width: 0%; background: linear-gradient(90deg, #d89a55, #c48745);">0%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="class-bar">
+                        <div class="class-bar-label">
+                            <span>🧪 Mahali Koleroga</span>
+                            <span id="mahaliKolerogaCount">--</span>
+                        </div>
+                        <div class="class-bar-fill-container">
+                            <div class="class-bar-fill" id="mahaliKolerogaBar" style="width: 0%; background: linear-gradient(90deg, #3a7d44, #2f6b3a);">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="class-bar">
+                        <div class="class-bar-label">
+                            <span>🍂 Yellow Leaf</span>
+                            <span id="yellowLeafCount">--</span>
+                        </div>
+                        <div class="class-bar-fill-container">
+                            <div class="class-bar-fill" id="yellowLeafBar" style="width: 0%; background: linear-gradient(90deg, #e3b23c, #d19b2a);">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="class-bar">
+                        <div class="class-bar-label">
+                            <span>🟤 Ring Spot</span>
+                            <span id="ringSpotCount">--</span>
+                        </div>
+                        <div class="class-bar-fill-container">
+                            <div class="class-bar-fill" id="ringSpotBar" style="width: 0%; background: linear-gradient(90deg, #8d6e63, #6d4c41);">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="class-bar">
+                        <div class="class-bar-label">
+                            <span>🌧️ Bud Rot</span>
+                            <span id="budRotCount">--</span>
+                        </div>
+                        <div class="class-bar-fill-container">
+                            <div class="class-bar-fill" id="budRotBar" style="width: 0%; background: linear-gradient(90deg, #7d4c3a, #5d3628);">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Sources -->
+        <div class="card">
+            <h2 class="section-title">📁 Dataset Sources</h2>
+            <div class="chart-card">
+                <p style="color: #666; margin-bottom: 20px;">
+                    Distribution of samples from different data sources
+                </p>
+                <div id="sourceDistribution">
+                    Loading source information...
+                </div>
+            </div>
+        </div>
+
+        <!-- Deep Learning Metrics (Module 2) -->
+        <div class="card">
+            <h2 class="section-title">🤖 Deep Learning Metrics (Module 2)</h2>
+            <p style="color: #666; margin-bottom: 25px;">DenseNet121 architecture and classification performance</p>
+            
+            <!-- Model Architecture Details -->
+            <div style="background: linear-gradient(135deg, #e6f1e5, #f4f7f2); padding: 30px; border-radius: 10px; border-left: 5px solid #3a7d44; margin-bottom: 30px;">
+                <h3 style="color: #2f6b3a; margin-bottom: 20px; font-size: 1.4rem;">🏗️ DenseNet121 Architecture (Transfer Learning)</h3>
+                <ul style="color: #555; line-height: 2.2; margin-left: 20px; font-size: 1.05rem;">
+                    <li><strong>Base Model:</strong> DenseNet121 pre-trained on ImageNet</li>
+                    <li><strong>Input Shape:</strong> 224 × 224 × 3 (RGB Images)</li>
+                    <li><strong>Output Classes:</strong> 6 (Healthy Leaf, Healthy Nut, Mahali Koleroga, Yellow Leaf, Ring Spot, Bud Rot)</li>
+                    <li><strong>Total Parameters:</strong> 7.3M trainable parameters</li>
+                    <li><strong>Training Strategy:</strong> Transfer learning with fine-tuning</li>
+                    <li><strong>Preprocessing:</strong> Resize + crop + ImageNet normalization</li>
+                    <li><strong>Confidence:</strong> Softmax probability distribution</li>
+                </ul>
+            </div>
+            
+            <!-- Technology Stack -->
+            <div style="margin-top: 30px;">
+                <h3 style="color: #2f6b3a; margin-bottom: 20px; font-size: 1.3rem;">🛠️ Technology Stack</h3>
+                <div class="tech-stack">
+                    <span class="tech-badge" style="background: linear-gradient(135deg, #3a7d44, #2f6b3a);">TensorFlow 2.x</span>
+                    <span class="tech-badge" style="background: linear-gradient(135deg, #3a7d44, #2f6b3a);">Keras</span>
+                    <span class="tech-badge" style="background: linear-gradient(135deg, #3a7d44, #2f6b3a);">DenseNet121</span>
+                    <span class="tech-badge" style="background: linear-gradient(135deg, #3a7d44, #2f6b3a);">Python 3.11</span>
+                    <span class="tech-badge" style="background: linear-gradient(135deg, #3a7d44, #2f6b3a);">Flask</span>
+                    <span class="tech-badge" style="background: linear-gradient(135deg, #3a7d44, #2f6b3a);">OpenCV</span>
+                    <span class="tech-badge" style="background: linear-gradient(135deg, #3a7d44, #2f6b3a);">NumPy</span>
+                    <span class="tech-badge" style="background: linear-gradient(135deg, #3a7d44, #2f6b3a);">scikit-learn</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>⚠️ Agricultural Disclaimer</h3>
+                    <p>For research and educational purposes only. Not a substitute for expert agronomy advice.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>📊 Data Sources</h3>
+                    <p>Local leaf condition dataset</p>
+                </div>
+                <div class="footer-section">
+                    <h3>🔗 Resources</h3>
+                    <p><a href="/" style="color: white; text-decoration: underline;">Home</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Leaf Condition Classifier. Built for Crop AI Research.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Load metrics on page load
+        document.addEventListener('DOMContentLoaded', loadAllMetrics);
+        
+        async function loadAllMetrics() {
+            try {
+                const response = await fetch('/api/metrics');
+                const data = await response.json();
+                
+                if (data.error) {
+                    console.error('Error loading metrics:', data.error);
+                    return;
+                }
+                
+                // Model Status
+                document.getElementById('modelPath').textContent = `Model: ${data.model.path}`;
+                document.getElementById('modelArch').textContent = `Architecture: ${data.model.architecture}`;
+                
+                if (data.model.status === 'loaded') {
+                    document.getElementById('modelStatus').className = 'status-indicator status-online';
+                } else {
+                    document.getElementById('modelStatus').className = 'status-indicator status-offline';
+                }
+                
+                // Key Metrics
+                document.getElementById('metricAccuracy').textContent = data.performance.reported_accuracy;
+                document.getElementById('metricTrainSamples').textContent = data.dataset.train_samples.toLocaleString();
+                document.getElementById('metricTestSamples').textContent = data.dataset.test_samples.toLocaleString();
+                document.getElementById('metricSpeed').textContent = data.performance.avg_inference_time;
+                
+                if (data.model.total_parameters) {
+                    const params = (data.model.total_parameters / 1000000).toFixed(1);
+                    document.getElementById('metricParams').textContent = `${params}M`;
+                } else {
+                    document.getElementById('metricParams').textContent = '7.3M';
+                }
+                
+                document.getElementById('metricGPU').textContent = data.performance.gpu_accelerated ? 'Enabled ✓' : 'CPU Only';
+                
+                // Class Distribution
+                if (data.dataset.classes) {
+                    const total = data.dataset.total_samples;
+                    const classes = data.dataset.classes;
+                    
+                    const healthyLeaf = classes.Healthy_Leaf || classes.healthy_leaf || classes.healthyLeaf || 0;
+                    const healthyNut = classes.Healthy_Nut || classes.healthy_nut || classes.healthyNut || 0;
+                    const mahaliKoleroga = classes.Mahali_Koleroga || classes.mahali_koleroga || classes.mahaliKoleroga || 0;
+                    const yellowLeaf = classes.Yellow_Leaf || classes.yellow_leaf || classes.yellowLeaf || 0;
+                    const ringSpot = classes.Ring_Spot || classes.ring_spot || classes.ringSpot || 0;
+                    const budRot = classes.Bud_Rot || classes.bud_rot || classes.budRot || 0;
+
+                    const maxCount = Math.max(healthyLeaf, healthyNut, mahaliKoleroga, yellowLeaf, ringSpot, budRot, 1);
+
+                    const toPercent = (value) => ((value / maxCount) * 100).toFixed(1);
+                    const toShare = (value) => ((value / total) * 100).toFixed(1);
+
+                    document.getElementById('healthyLeafCount').textContent = healthyLeaf.toLocaleString();
+                    document.getElementById('healthyNutCount').textContent = healthyNut.toLocaleString();
+                    document.getElementById('mahaliKolerogaCount').textContent = mahaliKoleroga.toLocaleString();
+                    document.getElementById('yellowLeafCount').textContent = yellowLeaf.toLocaleString();
+                    document.getElementById('ringSpotCount').textContent = ringSpot.toLocaleString();
+                    document.getElementById('budRotCount').textContent = budRot.toLocaleString();
+
+                    setTimeout(() => {
+                        document.getElementById('healthyLeafBar').style.width = toPercent(healthyLeaf) + '%';
+                        document.getElementById('healthyLeafBar').textContent = toShare(healthyLeaf) + '%';
+
+                        document.getElementById('healthyNutBar').style.width = toPercent(healthyNut) + '%';
+                        document.getElementById('healthyNutBar').textContent = toShare(healthyNut) + '%';
+
+                        document.getElementById('mahaliKolerogaBar').style.width = toPercent(mahaliKoleroga) + '%';
+                        document.getElementById('mahaliKolerogaBar').textContent = toShare(mahaliKoleroga) + '%';
+
+                        document.getElementById('yellowLeafBar').style.width = toPercent(yellowLeaf) + '%';
+                        document.getElementById('yellowLeafBar').textContent = toShare(yellowLeaf) + '%';
+
+                        document.getElementById('ringSpotBar').style.width = toPercent(ringSpot) + '%';
+                        document.getElementById('ringSpotBar').textContent = toShare(ringSpot) + '%';
+
+                        document.getElementById('budRotBar').style.width = toPercent(budRot) + '%';
+                        document.getElementById('budRotBar').textContent = toShare(budRot) + '%';
+                    }, 500);
+                }
+                
+                // Source Distribution
+                if (data.dataset.sources) {
+                    const sourceDiv = document.getElementById('sourceDistribution');
+                    sourceDiv.innerHTML = '';
+                    
+                    const total = data.dataset.total_samples;
+                    
+                    Object.entries(data.dataset.sources).forEach(([source, count]) => {
+                        const percent = ((count / total) * 100).toFixed(1);
+                        const sourceName = source.replace(/_/g, ' ');
+                        
+                        sourceDiv.innerHTML += `
+                            <div class="class-bar">
+                                <div class="class-bar-label">
+                                    <span>📁 ${sourceName}</span>
+                                    <span>${count.toLocaleString()} samples</span>
+                                </div>
+                                <div class="class-bar-fill-container">
+                                    <div class="class-bar-fill" style="width: ${percent}%; background: linear-gradient(90deg, #2196F3, #1976D2);">
+                                        ${percent}%
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error loading metrics:', error);
+            }
+        }
+    </script>
+</body>
+</html>
