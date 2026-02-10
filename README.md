@@ -95,7 +95,6 @@ LeafDiseaseClassification/
 
 - `docs/ARCHITECTURE.md` — system architecture and data flow
 - `docs/SETUP.md` — environment setup and troubleshooting
-- `docs/DOCKER.md` — CPU-only Docker usage
 
 ---
 
@@ -127,4 +126,4 @@ This is a research/educational project.
 
 ---
 
-*Last Updated: November 21, 2025*
+*Last Updated: February 10, 2026*

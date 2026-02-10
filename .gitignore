@@ -60,14 +60,8 @@ Thumbs.db
 logs/
 *.log
 
-# Model artifacts and outputs
-models/current/
-models/*.keras
-models/*.h5
-models/*.ckpt
-models/*.tf
-models/*.pb
-models/*/checkpoint
+# Model artifacts: keep models/ tracked for deployment
+# (Do not add dataset files; `data/` remains ignored)
 
 # Data and generated outputs (do NOT commit datasets or temporary outputs)
 datasets/
