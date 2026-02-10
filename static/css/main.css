@@ -1537,6 +1537,35 @@ h3 {
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .main-content {
+        padding-top: 70px;
+        padding-bottom: 30px;
+    }
+
+    .navbar {
+        position: sticky;
+    }
+
+    .nav-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .nav-links {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .nav-link {
+        padding: 6px 12px;
+    }
+
     .hero-title {
         font-size: 2.5rem;
     }
@@ -1544,9 +1573,57 @@ h3 {
     .hero-subtitle {
         font-size: 1.1rem;
     }
+
+    .hero {
+        padding: 100px 0 40px;
+    }
     
     .stats-bar {
         grid-template-columns: 1fr;
+    }
+
+    .stat-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card {
+        padding: 24px;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+    }
+
+    .upload-area {
+        padding: 32px 16px;
+    }
+
+    .upload-icon {
+        font-size: 3.2rem;
+    }
+
+    .upload-text {
+        font-size: 1.2rem;
+    }
+
+    .preview-image {
+        max-width: 100%;
+        max-height: 280px;
+    }
+
+    .button-group,
+    .action-buttons,
+    .report-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn,
+    .btn-large {
+        width: 100%;
+        justify-content: center;
     }
     
     .nav-links {
@@ -1557,9 +1634,25 @@ h3 {
         flex-direction: column;
         align-items: flex-start;
     }
+
+    .diagnosis-card {
+        padding: 24px;
+    }
+
+    .diagnosis-title {
+        font-size: 1.9rem;
+    }
+
+    .confidence-bar {
+        height: 30px;
+    }
     
     .probabilities-grid {
         grid-template-columns: 1fr;
+    }
+
+    .prob-item {
+        padding: 14px;
     }
     
     .pipeline-vertical {
@@ -1605,6 +1698,11 @@ h3 {
     .module-overview {
         flex-direction: column;
     }
+
+    .module-card {
+        min-width: 0;
+        width: 100%;
+    }
     
     .pipeline-arrow {
         transform: rotate(90deg);
@@ -1621,5 +1719,65 @@ h3 {
     .module-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metric-card {
+        padding: 22px;
+    }
+
+    .metric-value {
+        font-size: 2.4rem;
+    }
+
+    .chart-card {
+        padding: 18px;
+    }
+
+    .class-bar-label {
+        font-size: 0.95rem;
+    }
+
+    .class-bar-fill-container {
+        height: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2.1rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .stat-item {
+        padding: 18px;
+    }
+
+    .diagnosis-title {
+        font-size: 1.6rem;
+    }
+
+    .confidence-label {
+        font-size: 1rem;
+    }
+
+    .report-page {
+        padding: 18px 14px 24px;
+    }
+
+    .report-table th,
+    .report-table td {
+        padding: 6px 8px;
+        font-size: 0.85rem;
+    }
+
+    .enhancement-summary {
+        grid-template-columns: 1fr;
     }
 }

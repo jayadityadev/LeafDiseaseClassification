@@ -1,4 +1,4 @@
-# Leaf Disease Classification - Base Dependencies
+# Brain Tumor Classification - Base Dependencies
 # Use this after installing TensorFlow (GPU or CPU version)
 
 # Data Processing
